@@ -1,3 +1,9 @@
+%%writefile app.py
+import streamlit as st
+import pandas as pd
+import numpy as np
+import joblib
+
 st.set_page_config(page_title="Income Prediction (Adult Census)", page_icon="💼")
 st.title("💼 Income Prediction (Adult Census)")
 st.caption("Perkiraan apakah penghasilan >50K USD/tahun berdasarkan data demografis.")
@@ -11,7 +17,6 @@ model = load_model()
 
 st.subheader("Input Data")
 
-# Opsi kategori (disesuaikan dengan dataset Adult)
 workclass_opts = [
     "Private","Self-emp-not-inc","Self-emp-inc","Federal-gov",
     "Local-gov","State-gov","Without-pay","Never-worked"
@@ -66,7 +71,6 @@ with st.form("form"):
     submitted = st.form_submit_button("Predict")
 
 if submitted:
-    # Nama kolom harus EXACT sama dengan training
     input_df = pd.DataFrame([{
         "Age": Age,
         "Workclass": Workclass,
@@ -87,7 +91,6 @@ if submitted:
     pred = model.predict(input_df)[0]
     proba = model.predict_proba(input_df)[0]
 
-    # Cari index proba kelas '>50K'
     classes = model.named_steps["classifier"].classes_
     idx_gt = np.where(classes == ">50K")[0][0]
     p_gt50k = float(proba[idx_gt])
